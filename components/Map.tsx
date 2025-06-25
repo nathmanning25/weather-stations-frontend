@@ -18,29 +18,30 @@ export default function Map(props: MapProps) {
 
   // State center coordinates
   const stateCenters: { [key: string]: [number, number] } = {
-    'NSW': [-31.2532, 146.9211],
-    'VIC': [-37.0201, 144.9646],
-    'QLD': [-20.9176, 142.7028],
-    'WA': [-27.6728, 121.6283],
-    'SA': [-30.0002, 136.2092],
-    'TAS': [-41.6368, 145.5788],
-    'NT': [-12.4634, 130.8456],
-    'ACT': [-35.4735, 149.0124]
+    NSW: [-31.2532, 146.9211],
+    VIC: [-37.0201, 144.9646],
+    QLD: [-20.9176, 142.7028],
+    WA: [-27.6728, 121.6283],
+    SA: [-30.0002, 136.2092],
+    TAS: [-41.6368, 145.5788],
+    NT: [-12.4634, 130.8456],
+    ACT: [-35.4735, 149.0124],
   };
 
   // Get center based on stations' state or use provided center
   const getMapCenter = (): [number, number] => {
     if (center) return center;
-    
+
     if (stations.length > 0) {
       const firstStationState = stations[0].state;
+
       // Check if all stations are from the same state
-      const allSameState = stations.every(station => station.state === firstStationState);
+      const allSameState = stations.every((station) => station.state === firstStationState);
       if (allSameState && stateCenters[firstStationState]) {
         return stateCenters[firstStationState];
       }
     }
-    
+
     return [-25.2744, 133.7751]; // Default Australia center
   };
 
@@ -54,11 +55,11 @@ export default function Map(props: MapProps) {
   return (
     <div className={styles.mapContainer}>
       <StateFilter />
-      <MapContainer 
+      <MapContainer
         key={`${defaultCenter[0]}-${defaultCenter[1]}`}
-        center={defaultCenter} 
-        zoom={zoom} 
-        scrollWheelZoom={true} 
+        center={defaultCenter}
+        zoom={zoom}
+        scrollWheelZoom={true}
         style={mapStyles}
       >
         <TileLayer
@@ -81,7 +82,7 @@ export default function Map(props: MapProps) {
                 {station.measurements.length > 0 && (
                   <div>
                     <h5>Latest Measurements:</h5>
-                    <ul>
+                    <ul className={styles.popupList}>
                       {station.measurements.slice(0, 3).map((measurement) => (
                         <li key={measurement.id}>
                           {measurement.variable_name}: {measurement.value}
