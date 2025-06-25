@@ -1,29 +1,11 @@
 "use client";
-import { useState } from "react";
 import { MapContainer, Marker, TileLayer, Popup } from "react-leaflet";
 import StateFilter from "./StateFilter";
 import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
-
-interface Measurement {
-  id: number;
-  weatherStationId: number;
-  variable_name: string;
-  value: number;
-  timestamp: string;
-}
-
-interface WeatherStation {
-  id: number;
-  wsName: string;
-  site: string;
-  portfolio: string;
-  state: string;
-  latitude: number;
-  longitude: number;
-  measurements: Measurement[];
-}
+import styles from "@/styles/map.module.css";
+import { WeatherStation } from "@/types/weatherStations";
 
 interface MapProps {
   stations: WeatherStation[];
@@ -33,7 +15,6 @@ interface MapProps {
 
 export default function Map(props: MapProps) {
   const { stations, zoom = 6, center } = props;
-  const [showMore, setShowMore] = useState(false);
 
   const defaultCenter: [number, number] = center || [-25.2744, 133.7751];
 
@@ -42,13 +23,8 @@ export default function Map(props: MapProps) {
     width: "100%",
   };
 
-  const showMoreMeasurements = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setShowMore(true);
-  };
-
   return (
-    <>
+    <div className={styles.mapContainer}>
       <StateFilter />
       <MapContainer center={defaultCenter} zoom={zoom} scrollWheelZoom={true} style={mapStyles}>
         <TileLayer
@@ -60,7 +36,7 @@ export default function Map(props: MapProps) {
         {stations.map((station) => (
           <Marker key={station.id} position={[station.latitude, station.longitude]}>
             <Popup>
-              <div>
+              <div role="region" aria-label={`Weather station: ${station.wsName}`}>
                 <h4>{station.wsName}</h4>
                 <p>
                   <strong>Location:</strong> {station.site}, {station.state}
@@ -71,7 +47,7 @@ export default function Map(props: MapProps) {
                 {station.measurements.length > 0 && (
                   <div>
                     <h5>Latest Measurements:</h5>
-                    <ul style={{ fontSize: "12px", margin: 0, paddingLeft: "15px" }}>
+                    <ul>
                       {station.measurements.slice(0, 3).map((measurement) => (
                         <li key={measurement.id}>
                           {measurement.variable_name}: {measurement.value}
@@ -80,11 +56,6 @@ export default function Map(props: MapProps) {
                         </li>
                       ))}
                     </ul>
-                    {station.measurements.length > 3 && (
-                      <small onClick={showMoreMeasurements}>
-                        ...and {showMore ? station.measurements.length - 3 : 0} more
-                      </small>
-                    )}
                   </div>
                 )}
               </div>
@@ -92,6 +63,6 @@ export default function Map(props: MapProps) {
           </Marker>
         ))}
       </MapContainer>
-    </>
+    </div>
   );
 }

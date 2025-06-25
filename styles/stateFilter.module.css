@@ -1,0 +1,8 @@
+.stateFilterBtns {
+  margin: 1rem 0.5rem 0.5rem 0.5rem;
+}
+
+.currentState {
+  font-weight: bold;
+  margin-top: 1rem;
+}
