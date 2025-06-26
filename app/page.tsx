@@ -7,8 +7,9 @@ type Props = {
 };
 
 export default async function Home({ searchParams }: Props) {
-  const response = await fetchWeatherStations(searchParams.state);
-
+  const params = await searchParams;
+  const response = await fetchWeatherStations(params.state);
+  
   return (
     <div>
       <main>
